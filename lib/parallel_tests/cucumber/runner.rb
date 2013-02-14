@@ -18,7 +18,7 @@ module ParallelTests
 
       def self.execute_command(cmd, process_number,  num_processes)
 
-        if (RbConfig::CONFIG['host_os'] =~ /mswin|windows|mingw32/i) != nil
+        if (RbConfig::CONFIG['host_os'] =~ /mswin|windows|mingw32/i) == nil
           cmd = "PARALLEL_TEST_GROUPS=#{ num_processes } ; export PARALLEL_TEST_GROUPS; TEST_ENV_NUMBER=#{test_env_number(process_number)} ; export TEST_ENV_NUMBER; #{cmd}"
         end
 
