@@ -12,13 +12,16 @@ module ParallelTests
           (runtime_logging if File.directory?(File.dirname(runtime_log))),
           cucumber_opts(options[:test_options]),
           *test_files
-        ].compact.join(" ")
+        ].compact.join(' ')
         execute_command(cmd, process_number, num_processes)
       end
 
       def self.execute_command(cmd, process_number,  num_processes)
-        prefix = "PARALLEL_TEST_GROUPS=#{ num_processes } ; export PARALLEL_TEST_GROUPS;"
-        cmd = "#{prefix} TEST_ENV_NUMBER=#{test_env_number(process_number)} ; export TEST_ENV_NUMBER; #{cmd}"
+
+        if (RbConfig::CONFIG['host_os'] =~ /mswin|windows|mingw32/i) != nil
+          cmd = "PARALLEL_TEST_GROUPS=#{ num_processes } ; export PARALLEL_TEST_GROUPS; TEST_ENV_NUMBER=#{test_env_number(process_number)} ; export TEST_ENV_NUMBER; #{cmd}"
+        end
+
         r, w = IO.pipe
         pid = Process.spawn(cmd,:out=>w)
         puts "waiting for #{pid}: #{cmd}\n"

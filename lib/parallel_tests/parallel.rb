@@ -119,10 +119,11 @@ module ParallelTests
         when /(open|free)bsd/
           `sysctl -n hw.ncpu`.to_i
         when /mswin|mingw/
-          require 'win32ole'
-          wmi = WIN32OLE.connect("winmgmts://")
-          cpu = wmi.ExecQuery("select NumberOfLogicalProcessors from Win32_Processor")
-          cpu.to_enum.first.NumberOfLogicalProcessors
+          #require 'win32ole'
+          #wmi = WIN32OLE.connect("winmgmts://")
+          #cpu = wmi.ExecQuery("select NumberOfLogicalProcessors from Win32_Processor")
+          #cpu.to_enum.first.NumberOfLogicalProcessors
+          1
         when /solaris2/
           `psrinfo -p`.to_i # this is physical cpus afaik
         else
