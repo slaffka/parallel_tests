@@ -4,7 +4,7 @@ module ParallelTests
   module Cucumber
     class Runner < ParallelTests::Test::Runner
       def self.run_tests(test_files, process_number, num_processes, options)
-        color = ($stdout.tty? ? 'AUTOTEST=1 ; export AUTOTEST ;' : '')#display color when we are in a terminal
+        color = ($stdout.tty? and unix? ? 'AUTOTEST=1 ; export AUTOTEST ;' : '')#display color when we are in a terminal
         runtime_logging = " --format ParallelTests::Cucumber::RuntimeLogger --out #{runtime_log}"
         cmd = [
           color,
@@ -16,9 +16,13 @@ module ParallelTests
         execute_command(cmd, process_number, num_processes)
       end
 
+      def self.unix?
+        (RbConfig::CONFIG['host_os'] =~ /mswin|windows|mingw/i) != nil
+      end
+
       def self.execute_command(cmd, process_number,  num_processes)
 
-        if (RbConfig::CONFIG['host_os'] =~ /mswin|windows|mingw32/i) == nil
+        if unix?
           cmd = "PARALLEL_TEST_GROUPS=#{ num_processes } ; export PARALLEL_TEST_GROUPS; TEST_ENV_NUMBER=#{test_env_number(process_number)} ; export TEST_ENV_NUMBER; #{cmd}"
         end
 
