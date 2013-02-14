@@ -17,8 +17,9 @@ module ParallelTests
       end
 
       def self.unix?
-        (RbConfig::CONFIG['host_os'] =~ /mswin|windows|mingw/i) != nil
+        (RbConfig::CONFIG['host_os'] =~ /mswin|windows|mingw/i) == nil
       end
+
 
       def self.execute_command(cmd, process_number,  num_processes)
 
