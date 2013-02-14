@@ -8,11 +8,11 @@ module ParallelTests
       end
 
       def self.test_suffix
-        "_test.rb"
+        '_test.rb'
       end
 
       def self.test_file_name
-        "test"
+        'test'
       end
 
       def self.run_tests(test_files, process_number, num_processes, options)
@@ -81,7 +81,7 @@ module ParallelTests
       # read output of the process and print it in chunks
       def self.fetch_output(process)
         all = ''
-        while buffer = process.readpartial(1000000)
+        while (buffer = process.readpartial(1000000))
           all << buffer
           $stdout.print buffer
           $stdout.flush
@@ -95,7 +95,7 @@ module ParallelTests
 
         # use recorded test runtime if we got enough data
         if lines.size * 1.5 > tests.size
-          puts "Using recorded test runtime"
+          puts 'Using recorded test runtime'
           times = Hash.new(1)
           lines.each do |line|
             test, time = line.split(":")
@@ -121,11 +121,11 @@ module ParallelTests
 
       def self.files_in_folder(folder, options={})
         pattern = if options[:symlinks] == false # not nil or true
-          "**/*"
+                    '**/*'
         else
           # follow one symlink and direct children
           # http://stackoverflow.com/questions/357754/can-i-traverse-symlinked-directories-in-ruby-with-a-glob
-          "**{,/*/**}/*"
+          '**{,/*/**}/*'
         end
         Dir[File.join(folder, pattern)].uniq
       end

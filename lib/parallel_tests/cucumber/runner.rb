@@ -16,13 +16,28 @@ module ParallelTests
         execute_command(cmd, process_number, num_processes)
       end
 
+      def self.execute_command(cmd, process_number,  num_processes)
+        prefix = "PARALLEL_TEST_GROUPS=#{ num_processes } ; export PARALLEL_TEST_GROUPS;"
+        cmd = "#{prefix} TEST_ENV_NUMBER=#{test_env_number(process_number)} ; export TEST_ENV_NUMBER; #{cmd}"
+        r, w = IO.pipe
+        pid = Process.spawn(cmd,:out=>w)
+        puts "waiting for #{pid}: #{cmd}\n"
+        _, status =Process.wait2(pid)
+        puts "child  #{pid}: finished\n"
+        w.close
+        output = r.readlines().join
+        r.close
+        $stdout.print output
+        {:stdout => output, :exit_status => $?.exitstatus}
+      end
+
       def self.executable
         if ParallelTests.bundler_enabled?
-          "bundle exec cucumber"
-        elsif File.file?("script/cucumber")
-          "script/cucumber"
+          'bundle exec cucumber'
+        elsif File.file?('script/cucumber')
+          'script/cucumber'
         else
-          "cucumber"
+          'cucumber'
         end
       end
 
@@ -31,11 +46,11 @@ module ParallelTests
       end
 
       def self.test_file_name
-        "feature"
+        'feature'
       end
 
       def self.test_suffix
-        ".feature"
+        '.feature'
       end
 
       def self.line_is_result?(line)
@@ -74,7 +89,7 @@ module ParallelTests
         # copied from https://github.com/cucumber/cucumber/blob/master/lib/cucumber/cli/profile_loader.rb#L85
         config = Dir.glob('{,.config/,config/}cucumber{.yml,.yaml}').first
         if config && File.read(config) =~ /^parallel:/
-          "--profile parallel"
+          '--profile parallel'
         end
       end
 

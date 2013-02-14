@@ -9,7 +9,7 @@ module ParallelTests
 
       def run_in_parallel(cmd, options={})
         count = " -n #{options[:count]}" if options[:count]
-        executable = File.expand_path("../../../bin/parallel_test", __FILE__)
+        executable = File.expand_path('../../../bin/parallel_test', __FILE__)
         command = "#{executable} --exec '#{cmd}'#{count}#{' --non-parallel' if options[:non_parallel]}"
         abort unless system(command)
       end
@@ -27,7 +27,7 @@ module ParallelTests
       # - do not use ' since run_in_parallel uses them to quote stuff
       # - simple system "set -o pipefail" returns nil even though set -o pipefail exists with 0
       def suppress_output(command, ignore_regex)
-        activate_pipefail = "set -o pipefail"
+        activate_pipefail = 'set -o pipefail'
         remove_ignored_lines = %Q{(grep -v "#{ignore_regex}" || test 1)}
 
         if system("#{activate_pipefail} && test 1")
@@ -38,7 +38,7 @@ module ParallelTests
       end
 
       def check_for_pending_migrations
-        abort_migrations = "db:abort_if_pending_migrations"
+        abort_migrations = 'db:abort_if_pending_migrations'
         if Rake::Task.task_defined?(abort_migrations)
           Rake::Task[abort_migrations].invoke
         end
@@ -64,17 +64,17 @@ module ParallelTests
 end
 
 namespace :parallel do
-  desc "create test databases via db:create --> parallel:create[num_cpus]"
+  desc 'create test databases via db:create --> parallel:create[num_cpus]'
   task :create, :count do |t,args|
     ParallelTests::Tasks.run_in_parallel("rake db:create RAILS_ENV=#{ParallelTests::Tasks.rails_env}", args)
   end
 
-  desc "drop test databases via db:drop --> parallel:drop[num_cpus]"
+  desc 'drop test databases via db:drop --> parallel:drop[num_cpus]'
   task :drop, :count do |t,args|
     ParallelTests::Tasks.run_in_parallel("rake db:drop RAILS_ENV=#{ParallelTests::Tasks.rails_env}", args)
   end
 
-  desc "update test databases by dumping and loading --> parallel:prepare[num_cpus]"
+  desc 'update test databases by dumping and loading --> parallel:prepare[num_cpus]'
   task(:prepare, [:count]) do |t,args|
     ParallelTests::Tasks.check_for_pending_migrations
     if defined?(ActiveRecord) && ActiveRecord::Base.schema_format == :ruby
@@ -89,30 +89,30 @@ namespace :parallel do
   end
 
   # when dumping/resetting takes too long
-  desc "update test databases via db:migrate --> parallel:migrate[num_cpus]"
+  desc 'update test databases via db:migrate --> parallel:migrate[num_cpus]'
   task :migrate, :count do |t,args|
     ParallelTests::Tasks.run_in_parallel("rake db:migrate RAILS_ENV=#{ParallelTests::Tasks.rails_env}", args)
   end
 
   # just load the schema (good for integration server <-> no development db)
-  desc "load dumped schema for test databases via db:schema:load --> parallel:load_schema[num_cpus]"
+  desc 'load dumped schema for test databases via db:schema:load --> parallel:load_schema[num_cpus]'
   task :load_schema, :count do |t,args|
     command = "rake db:schema:load RAILS_ENV=#{ParallelTests::Tasks.rails_env}"
     ParallelTests::Tasks.run_in_parallel(ParallelTests::Tasks.suppress_output(command, "^   ->\\|^-- "), args)
   end
 
-  desc "load the seed data from db/seeds.rb via db:seed --> parallel:seed[num_cpus]"
+  desc 'load the seed data from db/seeds.rb via db:seed --> parallel:seed[num_cpus]'
   task :seed, :count do |t,args|
     ParallelTests::Tasks.run_in_parallel("rake db:seed RAILS_ENV=#{ParallelTests::Tasks.rails_env}", args)
   end
 
-  ['test', 'spec', 'features'].each do |type|
+  %w(test spec features).each do |type|
     desc "run #{type} in parallel with parallel:#{type}[num_cpus]"
     task type, [:count, :pattern, :options] do |t, args|
       ParallelTests::Tasks.check_for_pending_migrations
 
       $LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), '..'))
-      require "parallel_tests"
+      require 'parallel_tests'
 
       count, pattern, options = ParallelTests::Tasks.parse_args(args)
       test_framework = {
