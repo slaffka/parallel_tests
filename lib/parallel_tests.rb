@@ -1,7 +1,7 @@
 require 'parallel_tests/version'
 require 'parallel_tests/grouper'
 require 'parallel_tests/railtie' if defined? Rails::Railtie
-require 'parallel_tests/parallel/parallel'
+require 'parallel_tests/parallel'
 
 module ParallelTests
   GREP_PROCESSES_COMMAND = 'ps -ef | grep [T]EST_ENV_NUMBER= 2>&1'
@@ -14,7 +14,6 @@ module ParallelTests
     ].detect{|c| not c.to_s.strip.empty? }.to_i
   end
 
-  # copied from http://github.com/carlhuda/bundler Bundler::SharedHelpers#find_gemfile
   def self.bundler_enabled?
     return true if Object.const_defined?(:Bundler)
 

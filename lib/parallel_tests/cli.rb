@@ -1,5 +1,5 @@
 require 'optparse'
-require 'parallel_tests/parallel/parallel'
+require 'parallel_tests/parallel'
 
 module ParallelTest
   module CLI
