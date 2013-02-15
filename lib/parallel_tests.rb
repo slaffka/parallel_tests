@@ -10,7 +10,8 @@ module ParallelTests
     [
       count,
       ENV['PARALLEL_TEST_PROCESSORS'],
-      Parallel.processor_count
+      #we gonna use nuch more parallel test
+      Parallel.ALLOWED_PARALLEL_THREADS_COUNT #Parallel.processor_count
     ].detect{|c| not c.to_s.strip.empty? }.to_i
   end
 

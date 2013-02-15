@@ -62,10 +62,12 @@ module ParallelTests
             out[i] = yield(i)
           end
         end
-
         wait_for_threads(threads)
-
         out
+      end
+
+      def ALLOWED_PARALLEL_THREADS_COUNT
+        20
       end
 
       def in_processes(options = {}, &block)
@@ -88,7 +90,7 @@ module ParallelTests
 
         if options[:in_threads]
           method = :in_threads
-          size = options[method] || 30
+          size = options[method] || ALLOWED_PARALLEL_THREADS_COUNT
         else
           method = :in_processes
           size = options[method] || processor_count
@@ -130,6 +132,8 @@ module ParallelTests
           1
         end
       end
+
+
 
       def physical_processor_count
         @physical_processor_count ||= case RbConfig::CONFIG['host_os']

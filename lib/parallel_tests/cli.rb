@@ -4,13 +4,9 @@ require 'parallel_tests/parallel'
 module ParallelTest
   module CLI
     def self.run(argv)
-
       options = parse_options!(argv)
 
-      @parallel = ParallelTests::Parallel
-
-      num_processes = ParallelTests.determine_number_of_processes(options[:count])
-      num_processes = num_processes * (options[:multiply] || 1)
+      num_processes = ParallelTests.determine_number_of_processes(options[:count]) * (options[:multiply] || 1)
 
       if options[:execute]
         execute_shell_command_in_parallel(options[:execute], num_processes, options)
@@ -30,7 +26,7 @@ module ParallelTest
         groups = runner.tests_in_groups(options[:files], num_processes, options)
         report_number_of_tests(runner, groups)
 
-        test_results = @parallel.map(groups, :in_threads => groups.size) do |group|
+        test_results = ParallelTests::Parallel.map(groups, :in_threads => groups.size) do |group|
           if group.empty?
             {:stdout => '', :exit_status => 0}
           else
@@ -126,7 +122,7 @@ TEXT
           ParallelTests::Test::Runner.execute_command(command, i, num_processes)
         end
       else
-        @parallel.map(runs, :in_threads  => num_processes) do |i|
+        ParallelTests::Parallel.map(runs, :in_threads  => num_processes) do |i|
           ParallelTests::Test::Runner.execute_command(command, i, num_processes)
         end
       end.flatten
