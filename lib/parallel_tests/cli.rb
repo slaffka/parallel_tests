@@ -44,8 +44,8 @@ module ParallelTest
     end
 
     def self.report_results(runner, test_results)
-      results = runner.find_results(test_results.map { |result| result[:stdout] }*"")
-      puts ""
+      results = runner.find_results(test_results.map { |result| result[:stdout] }*'')
+      puts ''
       puts runner.summarize_results(results)
     end
 
