@@ -34,9 +34,7 @@ module ParallelTests
         puts "child  #{pid}: finished\n"
         w.close
         output = r.readlines().join
-          .encode!('windows-1251', 'utf-8', :invalid => :replace, :replace => '?')
-          .encode!('windows-1252', 'windows-1251', :invalid => :replace, :replace => '?')
-
+        output = output.encode!('windows-1251', 'utf-8', :invalid => :replace, :replace => '?') unless unix?
         r.close
         $stdout.print output
         {:stdout => output, :exit_status => status.exitstatus}
