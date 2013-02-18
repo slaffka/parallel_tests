@@ -114,7 +114,7 @@ namespace :parallel do
       $LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), '..'))
       require 'parallel_tests'
 
-      count, pattern, options = ParallelTests::Tasks.parse_args(args)
+      count, pattern, options = ParallelTests::Tasks.parse_axrgs(args)
       test_framework = {
         'spec' => 'rspec',
         'test' => 'test',
