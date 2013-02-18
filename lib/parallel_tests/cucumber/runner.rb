@@ -36,7 +36,7 @@ module ParallelTests
         output = r.readlines().join
         r.close
         $stdout.print output
-        {:stdout => output, :exit_status => $?.exitstatus}
+        {:stdout => output, :exit_status => status.exitstatus}
       end
 
       def self.executable
@@ -78,10 +78,10 @@ module ParallelTests
           sums = sum_up_results(group_results)
           sums = sums.sort_by { |word, _| sort_order.index(word) || 999 }
           sums.map! do |word, number|
-            plural = "s" if word == group and number != 1
+            plural = 's' if word == group and number != 1
             "#{number} #{word}#{plural}"
           end
-          "#{sums[0]} (#{sums[1..-1].join(", ")})"
+          "#{sums[0]} (#{sums[1..-1].join(', ')})"
         end.compact.join("\n")
       end
 
