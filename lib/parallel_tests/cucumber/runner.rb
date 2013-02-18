@@ -34,7 +34,8 @@ module ParallelTests
         puts "child  #{pid}: finished\n"
         w.close
         output = r.readlines().join
-          .encode!('windows-1252', 'utf-8', :invalid => :replace, :replace => '?')
+          .encode!('windows-1251', 'utf-8', :invalid => :replace, :replace => '?')
+          .encode!('windows-1251', 'windows-1252', :invalid => :replace, :replace => '?')
 
         r.close
         $stdout.print output
