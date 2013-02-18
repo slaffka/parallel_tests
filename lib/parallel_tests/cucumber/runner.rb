@@ -33,7 +33,9 @@ module ParallelTests
         _, status =Process.wait2(pid)
         puts "child  #{pid}: finished\n"
         w.close
-        output = r.readlines().join.encode!('windows-1251', 'utf-8', :invalid => :replace, :replace => '?')
+        output = r.readlines().join
+          .encode!('windows-1252', 'utf-8', :invalid => :replace, :replace => '?')
+
         r.close
         $stdout.print output
         {:stdout => output, :exit_status => status.exitstatus}
